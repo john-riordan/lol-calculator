@@ -1,0 +1,39 @@
+@font-face {
+	font-family: 'Beaufort';
+	src: url('BeaufortforLOL-Bold.eot?#iefix') format('eot'),
+		url('BeaufortforLOL-Bold.woff') format('woff'),
+		url('BeaufortforLOL-Bold.ttf') format('truetype'), url('BeaufortforLOL-Bold.svg#') format('svg');
+	font-style: normal;
+	font-weight: 700;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html {
+	--c1-hsl: 212deg 100% 96%;
+	--c1: hsl(var(--c1-hsl));
+	--c10-hsl: 212deg 100% 4%;
+	--c10: hsl(var(--c10-hsl));
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: 'Beaufort', serif;
+	line-height: 1.5;
+	text-transform: uppercase;
+	letter-spacing: 0.05ch;
+	background: var(--c10);
+}
+
+body,
+input,
+button {
+	color: var(--c1);
+}
