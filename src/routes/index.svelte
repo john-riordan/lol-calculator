@@ -1,22 +1,8 @@
 <script>
-	import { onMount } from 'svelte';
 	import LevelSelector from '$lib/components/level-selector.svelte';
 	import HealthBar from '$lib/components/healthbar.svelte';
 	import { statAtLevel, formatVal } from '$lib/utils';
-
-	async function loadData() {
-		const data = await fetch('/data');
-		const json = await data.json();
-
-		return json.champions;
-	}
-
-	/** @type {Object} */
-	let data = {};
-
-	onMount(async () => {
-		data = await loadData();
-	});
+	import { championData } from '$lib/stores';
 
 	let level = 1;
 	let sort = 'name';
@@ -26,7 +12,7 @@
 		level = lvl;
 	}
 
-	$: champions = Object.values(data)
+	$: champions = Object.values($championData)
 		.map((champion) => {
 			const {
 				id,
@@ -39,6 +25,7 @@
 					magicResistance,
 					attackDamage,
 					attackSpeed,
+					attackRange,
 					mana,
 					manaRegen
 				}
@@ -54,72 +41,94 @@
 				magicResistance: statAtLevel(magicResistance.flat, magicResistance.perLevel, level),
 				attackDamage: statAtLevel(attackDamage.flat, attackDamage.perLevel, level),
 				attackSpeed: statAtLevel(attackSpeed.flat, attackSpeed.perLevel, level),
+				attackRange: statAtLevel(attackRange.flat, attackSpeed.perLevel, level),
 				mana: statAtLevel(mana.flat, mana.perLevel, level),
 				manaRegen: statAtLevel(manaRegen.flat, manaRegen.perLevel, level)
 			};
 		})
-		.sort((a, b) => (sort === 'name' ? a.name.localeCompare(b[sort]) : a[sort] - b[sort]));
+		.sort((a, b) => {
+			const first = desc ? a : b;
+			const last = desc ? b : a;
 
-	function setSort(col, desc) {
+			return sort === 'name' ? first.name.localeCompare(last[sort]) : first[sort] - last[sort];
+		});
+
+	function setSort(col) {
+		console.log('xxxx desc', sort, col);
 		if (sort === col) {
 			desc = !desc;
 			return;
 		}
 		sort = col;
 	}
-
-	$: console.log(data);
 </script>
 
-<LevelSelector {level} {setLevel} />
-
-<table>
-	<tr>
-		<th on:click={() => setSort('name')} scope="col">Champion</th>
-		<th on:click={() => (sort = '')} scope="col">Health bar</th>
-		<th on:click={() => (sort = 'health')} scope="col">Health</th>
-		<th on:click={() => (sort = 'healthRegen')} scope="col">Health / 5</th>
-		<th on:click={() => (sort = 'armor')} scope="col">Armor</th>
-		<th on:click={() => (sort = 'magicResistance')} scope="col">MR</th>
-		<th on:click={() => (sort = 'attackDamage')} scope="col">AD</th>
-		<th on:click={() => (sort = 'attackSpeed')} scope="col">AS</th>
-		<th on:click={() => (sort = 'mana')} scope="col">Mana</th>
-		<th on:click={() => (sort = 'manaRegen')} scope="col">Mana / 5</th>
-	</tr>
-	{#each champions as champion}
-		{@const {
-			icon,
-			name,
-			health,
-			healthRegen,
-			armor,
-			magicResistance,
-			attackDamage,
-			attackSpeed,
-			mana,
-			manaRegen
-		} = champion}
+<div class="content">
+	<LevelSelector {level} {setLevel} />
+	<table>
 		<tr>
-			<td class="name">
-				<div class="info">
-					<img src={icon} alt={name} loading="lazy" width="40" height="40" />
-					<span>{name}</span>
-				</div>
-			</td>
-			<td><HealthBar {health} /></td>
-			<td>{formatVal(health)}</td>
-			<td>{formatVal(healthRegen, 1)}</td>
-			<td>{formatVal(armor)}</td>
-			<td>{formatVal(magicResistance)}</td>
-			<td>{formatVal(attackDamage)}</td>
-			<td>{formatVal(attackSpeed, 2)}</td>
-			<td>{formatVal(mana)}</td>
-			<td>{formatVal(manaRegen)}</td>
+			<th on:click={() => setSort('name')} scope="col">Champion</th>
+			<th on:click={() => setSort('health')} scope="col">Health</th>
+			<th on:click={() => setSort('healthRegen')} scope="col">Health / 5</th>
+			<th on:click={() => setSort('armor')} scope="col">Armor</th>
+			<th on:click={() => setSort('magicResistance')} scope="col">MR</th>
+			<th on:click={() => setSort('attackDamage')} scope="col">Atk.Dmg.</th>
+			<th on:click={() => setSort('attackSpeed')} scope="col">Atk. Spd.</th>
+			<th on:click={() => setSort('attackRange')} scope="col">Atk. Rng.</th>
+			<th on:click={() => setSort('mana')} scope="col">Mana</th>
+			<th on:click={() => setSort('manaRegen')} scope="col">Mana / 5</th>
 		</tr>
-	{/each}
-</table>
+		{#each champions as champion}
+			{@const {
+				icon,
+				name,
+				health,
+				healthRegen,
+				armor,
+				magicResistance,
+				attackDamage,
+				attackSpeed,
+				attackRange,
+				mana,
+				manaRegen
+			} = champion}
+			<tr>
+				<td class="name">
+					<div class="info">
+						<HealthBar {name} {level} {health} portait={icon} />
+					</div>
+				</td>
+				<td>{formatVal(health)}</td>
+				<td>{formatVal(healthRegen, 1)}</td>
+				<td>{formatVal(armor)}</td>
+				<td>{formatVal(magicResistance)}</td>
+				<td>{formatVal(attackDamage)}</td>
+				<td>{formatVal(attackSpeed, 2)}</td>
+				<td>{formatVal(attackRange)}</td>
+				<td>{formatVal(mana)}</td>
+				<td>{formatVal(manaRegen)}</td>
+			</tr>
+		{/each}
+	</table>
+</div>
 
 <style lang="scss">
+	:global(body) {
+		padding: 4rem;
+	}
+
+	.content {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 2rem;
+	}
+
+	th {
+		user-select: none;
+		cursor: pointer;
+	}
+
 	td {
 		padding: 0.25em;
 		min-width: 10ch;

@@ -37,3 +37,9 @@ input,
 button {
 	color: var(--c1);
 }
+
+input,
+button {
+	background: hsl(var(--c1-hsl) / 0.15);
+	border: none;
+}

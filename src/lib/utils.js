@@ -10,20 +10,16 @@ export function statAtLevel(statFlat, statPerLevel, level = 1) {
 	return statFlat + statPerLevel * (level - 1) * (0.7025 + 0.0175 * (level - 1));
 }
 
-export function statsAtLevel(champion, level = 1) {
-	if (!champion || !champion.stats) return null;
+export function statsAtLevel(champion, items = [], level = 1) {
+	if (!champion || !champion.stats) return {};
 
-	// const {
-	// 	stats: { health, healthRegen, armor, magicResistance, mana, manaRegen, attackDamage }
-	// } = champ;
-
-	const statslist = ['health', 'healthRegen', 'armor'];
+	const statslist = ['health', 'healthRegen', 'armor', 'magicResistance', 'attackDamage'];
 	const stats = {};
 
 	for (const statKey of statslist) {
-		const { flat, perLevel } = champ.stats[statKey];
+		const { flat, perLevel } = champion.stats[statKey];
 
-		stats[statKey] = statAtLevel(flex, perLevel, level);
+		stats[statKey] = statAtLevel(flat, perLevel, level);
 	}
 
 	return stats;

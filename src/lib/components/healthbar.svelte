@@ -1,25 +1,119 @@
 <script>
-	export let health = 750;
+	import { championData } from '$lib/stores';
 
-	$: tickCount = Math.floor(health / 100);
+	export let name = '';
+	export let level = 10;
+	export let health = 750;
+	export let missingHealth = 0;
+	export let portait = '';
+
+	$: displayedHealth = health;
+
+	$: {
+		if (name === 'Kled') {
+		}
+	}
+
+	$: tickCount = Math.floor(displayedHealth / 100);
 	$: bars = [...new Array(tickCount)];
 </script>
 
-<div class="healthbar">
-	{#each bars as bar, i}
-		<div class="tick" class:large={i === 10 || i === 20} />
-	{/each}
+<div class="container">
+	{#if portait}
+		<img src={portait} alt={name} width="32" height="32" class="portrait" loading="lazy" />
+	{/if}
+	<div>
+		{#if name}
+			<div class="name-frame">
+				<span class="name">{name}</span>
+			</div>
+		{/if}
+		<div class="ui">
+			<div class="level-frame frame">
+				<div class="level">
+					<span>{level}</span>
+				</div>
+			</div>
+			<div class="health-and-mana frame">
+				<div class="healthbar">
+					<div class="ticks">
+						{#each bars as bar, i}
+							<div class="tick" class:large={i === 10 || i === 20} />
+						{/each}
+					</div>
+					{#if missingHealth}
+						<div class="missing-health" style:--missing-hp={missingHealth / displayedHealth} />
+					{/if}
+				</div>
+				<div class="manabar" />
+			</div>
+		</div>
+	</div>
 </div>
 
 <style lang="scss">
+	.container {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+	.name-frame {
+		display: flex;
+		justify-content: center;
+		padding-left: 12px;
+	}
+	.name {
+		font-size: 12px;
+		text-shadow: 1px 1px black;
+		text-transform: capitalize;
+	}
+	.frame {
+		padding: 2px;
+		background: #5a5d5a;
+		box-shadow: inset 0 1px 0 0 hsl(0deg 0% 100% / 20%), 0 0 0 2px hsl(0deg 0% 0%),
+			inset 0 -1px 0 0 hsl(0deg 0% 0% / 20%);
+	}
+	.ui {
+		display: flex;
+		align-items: center;
+	}
+	.level-frame {
+		position: relative;
+		width: 25px;
+		height: 28px;
+		border-radius: 3px;
+		clip-path: polygon(-2px -2px, 100% -2px, 100% calc(100% + 3px), -2px calc(100% + 3px));
+		z-index: 1;
+	}
+	.level {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 21px;
+		height: 24px;
+		padding: 2px;
+		font-size: 12px;
+		text-shadow: 1px 1px black;
+		letter-spacing: 0;
+		background: linear-gradient(145deg, #102939 0%, #001c2b 100%);
+		box-shadow: inset 0 0 0 1px black;
+		border-radius: 3px;
+	}
+
+	.health-and-mana {
+		display: flex;
+		flex-direction: column;
+		gap: 1px;
+		padding-left: 0;
+		border-radius: 3px;
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+	}
+
 	.healthbar {
 		position: relative;
-		display: flex;
-		align-items: flex-start;
-		justify-content: space-between;
 		width: 105px;
 		height: 11px;
-		border: 1px solid black;
 		background: linear-gradient(
 			to bottom,
 			#52cf52 0%,
@@ -28,6 +122,38 @@
 			#318a21 75%,
 			#298a21 100%
 		);
+		box-shadow: 0 0 0 1px hsla(0deg 0% 0% / 20%), inset 0 1px 0 0 hsla(0deg 0% 100% / 25%);
+		border-radius: 2px;
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+		border: 1px solid black;
+		overflow: hidden;
+	}
+
+	.ticks {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+	}
+
+	.missing-health {
+		position: absolute;
+		top: 0;
+		right: 0;
+		height: 9px;
+		width: calc(var(--missing-hp) * 100%);
+		background: black;
+	}
+
+	.manabar {
+		height: 5px;
+		width: 100%;
+		background: linear-gradient(180deg, #42aade 0%, #42aade 100%);
+		border: 1px solid black;
+		border-radius: 2px;
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+		box-shadow: inset 0 1px 0 0 hsl(0deg 0% 100% / 15%);
 	}
 
 	.tick {
@@ -37,7 +163,7 @@
 
 		&.large {
 			width: 2px;
-			height: 11px;
+			height: 10px;
 		}
 
 		&:first-child,
@@ -45,5 +171,10 @@
 			opacity: 0;
 			width: 0;
 		}
+	}
+
+	.portrait {
+		border-radius: 3px;
+		transform: translateY(8px);
 	}
 </style>
