@@ -1,6 +1,6 @@
 <script>
-	import LevelSelector from '$lib/components/level-selector.svelte';
-	import HealthBar from '$lib/components/healthbar.svelte';
+	import LevelSelector from '$lib/components/LevelSelector.svelte';
+	import HealthBar from '$lib/components/HealthBar.svelte';
 	import { statAtLevel, formatVal } from '$lib/utils';
 	import { championData } from '$lib/stores';
 

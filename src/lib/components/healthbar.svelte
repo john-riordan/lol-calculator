@@ -14,7 +14,7 @@
 		}
 	}
 
-	$: tickCount = Math.floor(displayedHealth / 100);
+	$: tickCount = Math.floor((displayedHealth + 200) / 100);
 	$: bars = [...new Array(tickCount)];
 </script>
 
@@ -38,7 +38,7 @@
 				<div class="healthbar">
 					<div class="ticks">
 						{#each bars as bar, i}
-							<div class="tick" class:large={i === 10 || i === 20} />
+							<div class="tick" class:large={i % 10 === 0} />
 						{/each}
 					</div>
 					{#if missingHealth}
@@ -56,6 +56,7 @@
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
+		padding: 0.5rem 0;
 	}
 	.name-frame {
 		display: flex;

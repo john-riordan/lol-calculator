@@ -1,8 +1,13 @@
 <script lang="typescript">
-	import { championData } from '$lib/stores';
-	import HealthBar from '$lib/components/healthbar.svelte';
-	import { statsAtLevel, formatVal } from '$lib/utils';
+	import { championData, itemsData } from '$lib/stores';
+	import HealthBar from '$lib/components/HealthBar.svelte';
+	import Inventory from '$lib/components/Inventory.svelte';
+	import StatsPanel from '$lib/components/StatsPanel.svelte';
+	import { statsAtLevel, formatVal, purchaseableItems } from '$lib/utils';
 
+	let itemModal: HTMLDialogElement;
+	let searchInput: HTMLInputElement;
+	let itemSearch = '';
 	let yourChampionId = 0;
 	let yourChampionLvl = 1;
 	let targetChampionId = 0;
@@ -15,14 +20,45 @@
 
 	$: yourChampion = $championData[yourChampionId];
 	$: yourInventory = [];
-	$: yourChampionStats = statsAtLevel(yourChampion, yourInventory, yourChampionLvl);
+	$: yourItems = yourInventory.map((id) => $itemsData[id]).filter(Boolean);
+	$: yourChampionStats = statsAtLevel(yourChampion, yourItems, yourChampionLvl);
 	$: targetChampion = $championData[targetChampionId];
 	$: targetInventory = [];
+	$: targetItems = targetInventory.map((id) => $itemsData[id]).filter(Boolean);
 	$: targetChampionStats = statsAtLevel(targetChampion, targetInventory, targetChampionLvl);
 
 	$: championsList = Object.values($championData).sort((a: Champion, b: Champion) => {
 		return a.name.localeCompare(b.name);
 	});
+
+	$: itemsList = Object.values($itemsData)
+		.filter((item) => {
+			return item.name.toLowerCase().includes(itemSearch.toLowerCase());
+		})
+		.sort((a, b) => b.shop.prices.total - a.shop.prices.total);
+
+	function openModal() {
+		itemModal?.showModal();
+		searchInput?.focus();
+	}
+	function closeModal() {
+		itemModal?.close();
+		searchInput?.blur();
+		itemSearch = '';
+	}
+	function addItem(inventory: [], itemId: number) {
+		return [...inventory, itemId];
+	}
+	function removeItem(inventory: [], itemId: number) {
+		return inventory.filter((item) => item !== itemId);
+	}
+	function handleItemClick(event: Event) {
+		if (event.detail) {
+			yourInventory = removeItem(yourInventory, event.detail);
+		} else {
+			openModal();
+		}
+	}
 </script>
 
 <div class="blocks">
@@ -40,12 +76,8 @@
 			<img src={yourChampion.icon} alt={yourChampion.name} width="52" height="52" />
 			<input type="number" min="1" max="18" bind:value={yourChampionLvl} />
 			<HealthBar level={yourChampionLvl} health={yourChampionStats.health} />
-			<ul>
-				<li>Health: {formatVal(yourChampionStats.health)}</li>
-				<li>Armor: {formatVal(yourChampionStats.armor)}</li>
-				<li>MR: {formatVal(yourChampionStats.magicResistance)}</li>
-				<li>Attack Damage: {formatVal(yourChampionStats.attackDamage)}</li>
-			</ul>
+			<StatsPanel stats={yourChampionStats} />
+			<Inventory items={yourItems} on:itemClick={handleItemClick} />
 		{/if}
 	</div>
 
@@ -63,15 +95,36 @@
 			<img src={targetChampion.icon} alt={targetChampion.name} width="52" height="52" />
 			<input type="number" min="1" max="18" bind:value={targetChampionLvl} />
 			<HealthBar level={targetChampionLvl} health={targetChampionStats.health} />
-			<ul>
-				<li>Health: {formatVal(targetChampionStats.health)}</li>
-				<li>Armor: {formatVal(targetChampionStats.armor)}</li>
-				<li>MR: {formatVal(targetChampionStats.magicResistance)}</li>
-				<li>Attack Damage: {formatVal(targetChampionStats.attackDamage)}</li>
-			</ul>
+			<StatsPanel stats={targetChampionStats} />
+			<Inventory items={targetItems} on:itemClick={handleItemClick} />
 		{/if}
 	</div>
 </div>
+
+<dialog bind:this={itemModal}>
+	<div class="items-modal">
+		<div class="controls">
+			<input type="text" bind:value={itemSearch} bind:this={searchInput} />
+			<button on:click={closeModal}>Close</button>
+		</div>
+		<ul class="items-list">
+			{#each purchaseableItems(itemsList) as item}
+				<li>
+					<button
+						class="item"
+						on:click={() => {
+							yourInventory = addItem(yourInventory, item.id);
+							closeModal();
+						}}
+					>
+						<img src={item.icon} alt={item.name} width="24" height="24" />
+						<span>{item.name}</span>
+					</button>
+				</li>
+			{/each}
+		</ul>
+	</div>
+</dialog>
 
 <style lang="scss">
 	.blocks {
@@ -88,6 +141,27 @@
 
 		select {
 			font-size: 1.25rem;
+		}
+	}
+
+	dialog::backdrop {
+		background: hsla(210deg, 90%, 4%, 0.75);
+		backdrop-filter: blur(5px);
+	}
+	.items-modal {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+	.items-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+
+		.item {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
 		}
 	}
 </style>

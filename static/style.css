@@ -14,8 +14,12 @@
 html {
 	--c1-hsl: 212deg 100% 96%;
 	--c1: hsl(var(--c1-hsl));
+	--c9-hsl: 209deg 74% 9%;
+	--c9: hsl(var(--c9-hsl));
 	--c10-hsl: 212deg 100% 4%;
 	--c10: hsl(var(--c10-hsl));
+
+	--gold-gradient: linear-gradient(140deg, #6a5927 0%, #ddc388 30%, #6e5b21 100%);
 }
 
 html,
@@ -40,6 +44,39 @@ button {
 
 input,
 button {
+	font-family: 'Beaufort', serif;
+	line-height: 1.5;
+	text-transform: uppercase;
+	letter-spacing: 0.05ch;
 	background: hsl(var(--c1-hsl) / 0.15);
 	border: none;
+}
+
+button {
+	padding: 0;
+	cursor: pointer;
+}
+
+ul,
+ol {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+img {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
+
+dialog {
+	padding: 2rem;
+	width: 95%;
+	max-width: 600px;
+	height: 50%;
+	max-height: 480px;
+	background: hsl(var(--c10-hsl) / 0.85);
+	border-color: hsl(var(--c1-hsl) / 0.15);
+	backdrop-filter: blur(10px);
 }
