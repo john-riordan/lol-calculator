@@ -25,6 +25,7 @@ export function statsAtLevel(champion, items = [], level = 1) {
 		if (!stats[statKey]) stats[statKey] = 0;
 		stats[statKey] += statAtLevel(flat, perLevel, level);
 	}
+	if (!stats.abilityHaste) stats.abilityHaste = 0;
 
 	// Parse items
 	let mythicBonuses = {};

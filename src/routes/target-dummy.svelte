@@ -63,21 +63,25 @@
 
 <div class="blocks">
 	<div class="champion-block">
-		{#if !yourChampionId}
-			<h3>Your Champion</h3>
-			<select bind:value={yourChampionId}>
-				<option value={0}>Select your champion</option>
-				{#each championsList as champ}
-					<option value={champ.id}>{champ.name}</option>
-				{/each}
-			</select>
-		{:else if yourChampion.id}
-			<h3>{yourChampion.name}</h3>
-			<img src={yourChampion.icon} alt={yourChampion.name} width="52" height="52" />
+		<h3>Your Champion</h3>
+		<select bind:value={yourChampionId}>
+			<option value={0}>Select your champion</option>
+			{#each championsList as champ}
+				<option value={champ.id}>{champ.name}</option>
+			{/each}
+		</select>
+		{#if yourChampion?.id}
 			<input type="number" min="1" max="18" bind:value={yourChampionLvl} />
-			<HealthBar level={yourChampionLvl} health={yourChampionStats.health} />
-			<StatsPanel stats={yourChampionStats} />
-			<Inventory items={yourItems} on:itemClick={handleItemClick} />
+			<HealthBar
+				level={yourChampionLvl}
+				health={yourChampionStats.health}
+				portait={yourChampion.icon}
+				name={yourChampion.name}
+			/>
+			<div class="stat-and-inventory">
+				<StatsPanel stats={yourChampionStats} />
+				<Inventory items={yourItems} on:itemClick={handleItemClick} />
+			</div>
 		{/if}
 	</div>
 
@@ -91,12 +95,18 @@
 				{/each}
 			</select>
 		{:else if targetChampion.id}
-			<h3>{targetChampion.name}</h3>
-			<img src={targetChampion.icon} alt={targetChampion.name} width="52" height="52" />
 			<input type="number" min="1" max="18" bind:value={targetChampionLvl} />
 			<HealthBar level={targetChampionLvl} health={targetChampionStats.health} />
-			<StatsPanel stats={targetChampionStats} />
-			<Inventory items={targetItems} on:itemClick={handleItemClick} />
+			<HealthBar
+				level={targetChampionLvl}
+				health={targetChampionStats.health}
+				portait={targetChampion.icon}
+				name={targetChampion.name}
+			/>
+			<div class="stat-and-inventory">
+				<StatsPanel stats={targetChampionStats} />
+				<Inventory items={targetItems} on:itemClick={handleItemClick} />
+			</div>
 		{/if}
 	</div>
 </div>
@@ -135,6 +145,7 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		gap: 2rem;
 		width: 400px;
 		padding: 2rem;
 		border: 2px solid hsl(var(--c1-hsl) / 0.15);
@@ -142,6 +153,12 @@
 		select {
 			font-size: 1.25rem;
 		}
+	}
+
+	.stat-and-inventory {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
 	}
 
 	dialog::backdrop {

@@ -1,6 +1,5 @@
 <script>
-	import { championData } from '$lib/stores';
-
+	import ChampImg from '$lib/components/ChampImg.svelte';
 	export let name = '';
 	export let level = 10;
 	export let health = 750;
@@ -18,11 +17,11 @@
 	$: bars = [...new Array(tickCount)];
 </script>
 
-<div class="container">
+<div class="container" class:hasName={name}>
 	{#if portait}
-		<img src={portait} alt={name} width="32" height="32" class="portrait" loading="lazy" />
+		<ChampImg icon={portait} round />
 	{/if}
-	<div>
+	<div class="info">
 		{#if name}
 			<div class="name-frame">
 				<span class="name">{name}</span>
@@ -55,9 +54,20 @@
 	.container {
 		display: flex;
 		align-items: center;
-		gap: 0.5rem;
+		gap: 0.75rem;
 		padding: 0.5rem 0;
+
+		:global(.champ-img) {
+			width: 3.5rem;
+		}
+
+		&.hasName {
+			.info {
+				transform: translateY(-4px);
+			}
+		}
 	}
+
 	.name-frame {
 		display: flex;
 		justify-content: center;

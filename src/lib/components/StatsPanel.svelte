@@ -1,28 +1,62 @@
-<script>
+<script lang="ts">
 	import Panel from '$lib/components/Panel.svelte';
+	import AD from '$lib/components/icons/AD.svelte';
+	import AP from '$lib/components/icons/AP.svelte';
+	import Armor from '$lib/components/icons/Armor.svelte';
+	import MR from '$lib/components/icons/MR.svelte';
+	import AttackSpeed from '$lib/components/icons/AttackSpeed.svelte';
+	import CDR from '$lib/components/icons/CDR.svelte';
+	import Crit from '$lib/components/icons/Crit.svelte';
+	import MoveSpeed from '$lib/components/icons/MoveSpeed.svelte';
 	import { formatVal } from '$lib/utils';
 
-	export let stats = {};
+	export let stats = {
+		attackDamage: 0,
+		abilityPower: 0,
+		armor: 0,
+		magicResistance: 0,
+		attackSpeed: 0,
+		abilityHaste: 0,
+		criticalStrikeChance: 0,
+		movespeed: 0
+	};
 </script>
 
-<Panel>
+<Panel --padding="1rem">
 	<ul class="cols">
-		<li>AD: {formatVal(stats.attackDamage) || 0}</li>
-		<li>AP: {formatVal(stats.abilityPower) || 0}</li>
-		<li>AR: {formatVal(stats.armor) || 0}</li>
-		<li>MR: {formatVal(stats.magicResistance) || 0}</li>
-		<li>AS: {formatVal(stats.attackSpeed, 2) || 0}</li>
-		<li>CDR: {formatVal(stats.abilityHaste) || 0}</li>
-		<li>Crit: {formatVal(stats.criticalStrikeChance || 0, 0, 'percent')}</li>
-		<li>MS: {formatVal(stats.movespeed) || 0}</li>
+		<li><AD /> <span>{formatVal(stats.attackDamage)}</span></li>
+		<li><AP /> <span>{formatVal(stats.abilityPower)}</span></li>
+		<li><Armor /> <span>{formatVal(stats.armor)}</span></li>
+		<li><MR /> <span>{formatVal(stats.magicResistance)}</span></li>
+		<li><AttackSpeed /> <span>{formatVal(stats.attackSpeed, 2)}</span></li>
+		<li><CDR /> <span>{formatVal(stats.abilityHaste)}</span></li>
+		<li><Crit /> <span>{formatVal(stats.criticalStrikeChance, 0, 'percent')}</span></li>
+		<li><MoveSpeed /> <span>{formatVal(stats.movespeed)}</span></li>
 	</ul>
 </Panel>
 
-<style>
+<style lang="scss">
 	.cols {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		grid-template-rows: repeat(4, 1fr);
-		column-gap: 1rem;
+		column-gap: 1.25rem;
+		row-gap: 0.25rem;
+
+		li {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+		}
+
+		span {
+			width: 5ch;
+			color: hsl(0deg 0% 80%);
+		}
+
+		:global(svg) {
+			width: 1rem;
+			height: 1rem;
+		}
 	}
 </style>
