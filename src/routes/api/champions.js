@@ -1,8 +1,7 @@
-export async function get(test) {
+export async function get() {
 	const data = await fetch(
 		'https://cdn.merakianalytics.com/riot/lol/resources/latest/en-US/champions.json'
 	);
-
 	const res = await data.json();
 
 	if (res) {
@@ -37,7 +36,7 @@ export async function get(test) {
 		}, {});
 
 		return {
-			body: { champions }
+			body: champions
 		};
 	}
 
