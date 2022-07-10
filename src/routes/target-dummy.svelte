@@ -1,9 +1,12 @@
-<script lang="typescript">
+<script lang="ts">
 	import { championData, itemsData } from '$lib/stores';
 	import HealthBar from '$lib/components/HealthBar.svelte';
 	import Inventory from '$lib/components/Inventory.svelte';
 	import StatsPanel from '$lib/components/StatsPanel.svelte';
-	import { statsAtLevel, formatVal, purchaseableItems } from '$lib/utils';
+	import Ability from '$lib/components/Ability.svelte';
+	import ItemImg from '$lib/components/ItemImg.svelte';
+	import { statsAtLevel, purchaseableItems } from '$lib/utils';
+	import { MYTHICS } from '$lib/constants';
 
 	let itemModal: HTMLDialogElement;
 	let searchInput: HTMLInputElement;
@@ -52,7 +55,7 @@
 	function removeItem(inventory: [], itemId: number) {
 		return inventory.filter((item) => item !== itemId);
 	}
-	function handleItemClick(event: Event) {
+	function handleItemClick(event: CustomEvent) {
 		if (event.detail) {
 			yourInventory = removeItem(yourInventory, event.detail);
 		} else {
@@ -81,6 +84,12 @@
 			<div class="stat-and-inventory">
 				<StatsPanel stats={yourChampionStats} />
 				<Inventory items={yourItems} on:itemClick={handleItemClick} />
+			</div>
+			<div>
+				<Ability ability={yourChampion.abilities['Q']} championStats={yourChampionStats} />
+				<Ability ability={yourChampion.abilities['W']} championStats={yourChampionStats} />
+				<Ability ability={yourChampion.abilities['E']} championStats={yourChampionStats} />
+				<Ability ability={yourChampion.abilities['R']} championStats={yourChampionStats} />
 			</div>
 		{/if}
 	</div>
@@ -113,10 +122,10 @@
 
 <dialog bind:this={itemModal}>
 	<div class="items-modal">
-		<div class="controls">
+		<header class="controls">
 			<input type="text" bind:value={itemSearch} bind:this={searchInput} />
 			<button on:click={closeModal}>Close</button>
-		</div>
+		</header>
 		<ul class="items-list">
 			{#each purchaseableItems(itemsList) as item}
 				<li>
@@ -127,8 +136,8 @@
 							closeModal();
 						}}
 					>
-						<img src={item.icon} alt={item.name} width="24" height="24" />
-						<span>{item.name}</span>
+						<ItemImg src={item.icon} alt={item.name} --size="56px" isMythic={MYTHICS[item.id]} />
+						<!-- <span>{item.name}</span> -->
 					</button>
 				</li>
 			{/each}
@@ -146,7 +155,7 @@
 		flex-direction: column;
 		align-items: center;
 		gap: 2rem;
-		width: 400px;
+		width: 480px;
 		padding: 2rem;
 		border: 2px solid hsl(var(--c1-hsl) / 0.15);
 
@@ -161,6 +170,9 @@
 		gap: 1rem;
 	}
 
+	dialog {
+		padding: 0;
+	}
 	dialog::backdrop {
 		background: hsla(210deg, 90%, 4%, 0.75);
 		backdrop-filter: blur(5px);
@@ -170,15 +182,24 @@
 		flex-direction: column;
 		gap: 1rem;
 	}
+	.controls {
+		padding: 2rem;
+		padding-bottom: 1rem;
+	}
 	.items-list {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
+		display: grid;
+		grid-template-columns: repeat(8, 1fr);
+		grid-auto-rows: min-content;
+		gap: 0.75rem;
+		padding: 2rem;
+		padding-top: 0;
+		height: 500px;
+		overflow-y: auto;
 
 		.item {
 			display: flex;
 			align-items: center;
-			gap: 0.5rem;
+			gap: 0.75rem;
 		}
 	}
 </style>

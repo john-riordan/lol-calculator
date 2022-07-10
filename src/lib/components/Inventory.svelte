@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 
 	import { MYTHICS } from '$lib/constants';
@@ -7,7 +7,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let items = [];
+	export let items: any = [];
 	$: slots = [...new Array(6)];
 </script>
 
@@ -15,7 +15,16 @@
 	<ul class="inventory">
 		{#each slots as slot, i}
 			{@const itemId = items[i]?.id}
-			<li on:click={() => dispatch('itemClick', itemId)}>
+			<li
+				on:click={(e) => {
+					e.preventDefault();
+					dispatch('itemClick', itemId);
+				}}
+				on:contextmenu={(e) => {
+					e.preventDefault();
+					dispatch('itemClick', itemId);
+				}}
+			>
 				<ItemImg
 					src={items[i]?.icon}
 					alt={items[i]?.name}

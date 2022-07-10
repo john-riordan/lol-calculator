@@ -1,3 +1,6 @@
+import AD from '$lib/components/icons/AD.svelte';
+import AP from '$lib/components/icons/AP.svelte';
+
 export const LVLS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
 
 export const STATS_AD = {
@@ -19,6 +22,22 @@ export const STATS_DEFENSE = {
 export const STATS_MAGIC = {
 	mana: true,
 	manaRegen: true
+};
+
+export const ABILITY_DMG_TYPES = {
+	'Magic Damage': 'var(--ap)',
+	MAGIC_DAMAGE: 'var(--ap)',
+	'Attack Damage': 'var(--ad)',
+	PHYSICAL_DAMAGE: 'var(--ad)',
+	'True Damage': 'var(--true)',
+	TRUE_DAMAGE: 'var(--true)'
+};
+
+export const ABILITY_DMG_ICONS = {
+	'Magic Damage': AP,
+	MAGIC_DAMAGE: AP,
+	'Attack Damage': AD,
+	PHYSICAL_DAMAGE: AD
 };
 
 export const MYTHICS = {
@@ -147,4 +166,10 @@ export const MYTHICS = {
 	7022: { name: 'Seat of Command', originalId: 4005 },
 	7023: { name: 'Equinox', originalId: 3001 },
 	7024: { name: 'Caesura', originalId: 4644 }
+};
+
+export const ITEM_EFFECTS = {
+	6653: {
+		effects: []
+	}
 };

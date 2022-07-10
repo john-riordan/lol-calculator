@@ -23,7 +23,7 @@
 	{/if}
 	<div class="info">
 		{#if name}
-			<div class="name-frame">
+			<div class="name-frame serif">
 				<span class="name">{name}</span>
 			</div>
 		{/if}

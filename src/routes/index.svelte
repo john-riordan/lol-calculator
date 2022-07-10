@@ -54,7 +54,6 @@
 		});
 
 	function setSort(col) {
-		console.log('xxxx desc', sort, col);
 		if (sort === col) {
 			desc = !desc;
 			return;

@@ -24,14 +24,16 @@
 
 <Panel --padding="1rem">
 	<ul class="cols">
-		<li><AD /> <span>{formatVal(stats.attackDamage)}</span></li>
-		<li><AP /> <span>{formatVal(stats.abilityPower)}</span></li>
-		<li><Armor /> <span>{formatVal(stats.armor)}</span></li>
-		<li><MR /> <span>{formatVal(stats.magicResistance)}</span></li>
-		<li><AttackSpeed /> <span>{formatVal(stats.attackSpeed, 2)}</span></li>
-		<li><CDR /> <span>{formatVal(stats.abilityHaste)}</span></li>
-		<li><Crit /> <span>{formatVal(stats.criticalStrikeChance, 0, 'percent')}</span></li>
-		<li><MoveSpeed /> <span>{formatVal(stats.movespeed)}</span></li>
+		<li><AD /> <span class="serif">{formatVal(stats.attackDamage)}</span></li>
+		<li><AP /> <span class="serif">{formatVal(stats.abilityPower)}</span></li>
+		<li><Armor /> <span class="serif">{formatVal(stats.armor)}</span></li>
+		<li><MR /> <span class="serif">{formatVal(stats.magicResistance)}</span></li>
+		<li><AttackSpeed /> <span class="serif">{formatVal(stats.attackSpeed, 2)}</span></li>
+		<li><CDR /> <span class="serif">{formatVal(stats.abilityHaste)}</span></li>
+		<li>
+			<Crit /> <span class="serif">{formatVal(stats.criticalStrikeChance, 0, 'percent')}</span>
+		</li>
+		<li><MoveSpeed /> <span class="serif">{formatVal(stats.movespeed)}</span></li>
 	</ul>
 </Panel>
 

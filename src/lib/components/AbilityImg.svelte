@@ -2,10 +2,9 @@
 	export let src = '';
 	export let alt = '';
 	export let size = 36;
-	export let isMythic = false;
 </script>
 
-<div class="frame-outer" class:isMythic>
+<div class="frame-outer">
 	<div class="frame-inner">
 		{#if src}
 			<img {src} {alt} width={size} height={size} />
@@ -19,7 +18,6 @@
 	.frame-outer,
 	.frame-inner {
 		width: 100%;
-
 		aspect-ratio: 1;
 	}
 	.frame-outer {
@@ -27,10 +25,6 @@
 		max-width: var(--size, 2rem);
 		padding: 1px;
 		background: var(--border-color);
-
-		&.isMythic {
-			--border-color: var(--gold-gradient);
-		}
 	}
 	.frame-inner {
 		background: hsl(var(--c10-hsl) / 0.75);
