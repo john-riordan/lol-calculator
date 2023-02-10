@@ -1,9 +1,8 @@
 import adapter from '@sveltejs/adapter-auto';
-import sveltePreprocess from 'svelte-preprocess';
+import { vitePreprocess } from '@sveltejs/kit/vite';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	preprocess: sveltePreprocess(),
 	kit: {
 		adapter: adapter(),
 		alias: {
@@ -11,7 +10,8 @@ const config = {
 			$utils: 'src/utils',
 			$constants: 'src/constants'
 		}
-	}
+	},
+	preprocess: [vitePreprocess()]
 };
 
 export default config;

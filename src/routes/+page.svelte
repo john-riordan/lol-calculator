@@ -1,8 +1,9 @@
 <script>
+	import { page } from '$app/stores';
+
 	import LevelSelector from '$lib/components/LevelSelector.svelte';
-	import HealthBar from '$lib/components/HealthBar.svelte';
+	import HealthBar from '$lib/components/healthbar.svelte';
 	import { statAtLevel, formatVal } from '$lib/utils';
-	import { championData } from '$lib/stores';
 
 	let level = 1;
 	let sort = 'name';
@@ -12,7 +13,7 @@
 		level = lvl;
 	}
 
-	$: champions = Object.values($championData)
+	$: champions = Object.values($page.data.champions)
 		.map((champion) => {
 			const {
 				id,
