@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { championData, itemsData } from '$lib/stores';
-	import HealthBar from '$lib/components/HealthBar.svelte';
+	import { page } from '$app/stores';
+
+	import HealthBar from '$lib/components/healthbar.svelte';
 	import Inventory from '$lib/components/Inventory.svelte';
 	import StatsPanel from '$lib/components/StatsPanel.svelte';
 	import Ability from '$lib/components/Ability.svelte';
@@ -21,20 +22,20 @@
 		name: string;
 	};
 
-	$: yourChampion = $championData[yourChampionId];
+	$: yourChampion = $page.data.champions[yourChampionId];
 	$: yourInventory = [];
-	$: yourItems = yourInventory.map((id) => $itemsData[id]).filter(Boolean);
+	$: yourItems = yourInventory.map((id) => $page.data.items[id]).filter(Boolean);
 	$: yourChampionStats = statsAtLevel(yourChampion, yourItems, yourChampionLvl);
-	$: targetChampion = $championData[targetChampionId];
+	$: targetChampion = $page.data.champions[targetChampionId];
 	$: targetInventory = [];
-	$: targetItems = targetInventory.map((id) => $itemsData[id]).filter(Boolean);
+	$: targetItems = targetInventory.map((id) => $page.data.items[id]).filter(Boolean);
 	$: targetChampionStats = statsAtLevel(targetChampion, targetInventory, targetChampionLvl);
 
-	$: championsList = Object.values($championData).sort((a: Champion, b: Champion) => {
+	$: championsList = Object.values($page.data.champions).sort((a: Champion, b: Champion) => {
 		return a.name.localeCompare(b.name);
 	});
 
-	$: itemsList = Object.values($itemsData)
+	$: itemsList = Object.values($page.data.items)
 		.filter((item) => {
 			return item.name.toLowerCase().includes(itemSearch.toLowerCase());
 		})
@@ -70,7 +71,7 @@
 		<select bind:value={yourChampionId}>
 			<option value={0}>Select your champion</option>
 			{#each championsList as champ}
-				<option value={champ.id}>{champ.name}</option>
+				<option value={champ.key}>{champ.name}</option>
 			{/each}
 		</select>
 		{#if yourChampion?.id}
@@ -100,7 +101,7 @@
 			<select bind:value={targetChampionId}>
 				<option value={0}>Select target champion</option>
 				{#each championsList as champ}
-					<option value={champ.id}>{champ.name}</option>
+					<option value={champ.key}>{champ.name}</option>
 				{/each}
 			</select>
 		{:else if targetChampion.id}
