@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 
-	import HealthBar from '$lib/components/HealthBar.svelte';
+	import HealthBar from '$lib/components/Health.svelte';
 	import Inventory from '$lib/components/Inventory.svelte';
 	import StatsPanel from '$lib/components/StatsPanel.svelte';
 	import Ability from '$lib/components/Ability.svelte';

@@ -1,5 +1,6 @@
 <script>
 	import ChampImg from '$lib/components/ChampImg.svelte';
+
 	export let name = '';
 	export let level = 10;
 	export let health = 750;

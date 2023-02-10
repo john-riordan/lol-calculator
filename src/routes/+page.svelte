@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 
 	import LevelSelector from '$lib/components/LevelSelector.svelte';
-	import HealthBar from '$lib/components/HealthBar.svelte';
+	import HealthBar from '$lib/components/Health.svelte';
 	import { statAtLevel, formatVal } from '$lib/utils';
 
 	let level = 1;
