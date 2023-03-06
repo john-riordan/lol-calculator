@@ -1,17 +1,12 @@
-import adapter from '@sveltejs/adapter-auto';
-import sveltePreprocess from 'svelte-preprocess';
+import adapter from '@sveltejs/adapter-vercel';
+import { vitePreprocess } from '@sveltejs/kit/vite';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	preprocess: sveltePreprocess(),
 	kit: {
-		adapter: adapter(),
-		alias: {
-			$components: 'src/components',
-			$utils: 'src/utils',
-			$constants: 'src/constants'
-		}
-	}
+		adapter: adapter()
+	},
+	preprocess: [vitePreprocess()]
 };
 
 export default config;

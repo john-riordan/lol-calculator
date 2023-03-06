@@ -1,0 +1,206 @@
+<script lang="ts">
+	import { page } from '$app/stores';
+
+	import HealthBar from '$lib/components/Health.svelte';
+	import Inventory from '$lib/components/Inventory.svelte';
+	import StatsPanel from '$lib/components/StatsPanel.svelte';
+	import Ability from '$lib/components/Ability.svelte';
+	import ItemImg from '$lib/components/ItemImg.svelte';
+	import { statsAtLevel, purchaseableItems } from '$lib/utils';
+	import { MYTHICS } from '$lib/constants';
+
+	let itemModal: HTMLDialogElement;
+	let searchInput: HTMLInputElement;
+	let itemSearch = '';
+	let yourChampionId = 0;
+	let yourChampionLvl = 1;
+	let targetChampionId = 0;
+	let targetChampionLvl = 1;
+
+	type Champion = {
+		id: number;
+		name: string;
+	};
+
+	$: yourChampion = $page.data.champions[yourChampionId];
+	$: yourInventory = [];
+	$: yourItems = yourInventory.map((id) => $page.data.items[id]).filter(Boolean);
+	$: yourChampionStats = statsAtLevel(yourChampion, yourItems, yourChampionLvl);
+	$: targetChampion = $page.data.champions[targetChampionId];
+	$: targetInventory = [];
+	$: targetItems = targetInventory.map((id) => $page.data.items[id]).filter(Boolean);
+	$: targetChampionStats = statsAtLevel(targetChampion, targetInventory, targetChampionLvl);
+
+	$: championsList = Object.values($page.data.champions).sort((a: Champion, b: Champion) => {
+		return a.name.localeCompare(b.name);
+	});
+
+	$: itemsList = Object.values($page.data.items)
+		.filter((item) => {
+			return item.name.toLowerCase().includes(itemSearch.toLowerCase());
+		})
+		.sort((a, b) => b.shop.prices.total - a.shop.prices.total);
+
+	function openModal() {
+		itemModal?.showModal();
+		searchInput?.focus();
+	}
+	function closeModal() {
+		itemModal?.close();
+		searchInput?.blur();
+		itemSearch = '';
+	}
+	function addItem(inventory: [], itemId: number) {
+		return [...inventory, itemId];
+	}
+	function removeItem(inventory: [], itemId: number) {
+		return inventory.filter((item) => item !== itemId);
+	}
+	function handleItemClick(event: CustomEvent) {
+		if (event.detail) {
+			yourInventory = removeItem(yourInventory, event.detail);
+		} else {
+			openModal();
+		}
+	}
+</script>
+
+<div class="blocks">
+	<div class="champion-block">
+		<h3>Your Champion</h3>
+		<select bind:value={yourChampionId}>
+			<option value={0}>Select your champion</option>
+			{#each championsList as champ}
+				<option value={champ.key}>{champ.name}</option>
+			{/each}
+		</select>
+		{#if yourChampion?.id}
+			<input type="number" min="1" max="18" bind:value={yourChampionLvl} />
+			<HealthBar
+				level={yourChampionLvl}
+				health={yourChampionStats.health}
+				portait={yourChampion.icon}
+				name={yourChampion.name}
+			/>
+			<div class="stat-and-inventory">
+				<StatsPanel stats={yourChampionStats} />
+				<Inventory items={yourItems} on:itemClick={handleItemClick} />
+			</div>
+			<div>
+				<Ability ability={yourChampion.abilities['Q']} championStats={yourChampionStats} />
+				<Ability ability={yourChampion.abilities['W']} championStats={yourChampionStats} />
+				<Ability ability={yourChampion.abilities['E']} championStats={yourChampionStats} />
+				<Ability ability={yourChampion.abilities['R']} championStats={yourChampionStats} />
+			</div>
+		{/if}
+	</div>
+
+	<div class="champion-block">
+		{#if !targetChampionId}
+			<h3>Target Champion</h3>
+			<select bind:value={targetChampionId}>
+				<option value={0}>Select target champion</option>
+				{#each championsList as champ}
+					<option value={champ.key}>{champ.name}</option>
+				{/each}
+			</select>
+		{:else if targetChampion.id}
+			<input type="number" min="1" max="18" bind:value={targetChampionLvl} />
+			<HealthBar level={targetChampionLvl} health={targetChampionStats.health} />
+			<HealthBar
+				level={targetChampionLvl}
+				health={targetChampionStats.health}
+				portait={targetChampion.icon}
+				name={targetChampion.name}
+			/>
+			<div class="stat-and-inventory">
+				<StatsPanel stats={targetChampionStats} />
+				<Inventory items={targetItems} on:itemClick={handleItemClick} />
+			</div>
+		{/if}
+	</div>
+</div>
+
+<dialog bind:this={itemModal}>
+	<div class="items-modal">
+		<header class="controls">
+			<input type="text" bind:value={itemSearch} bind:this={searchInput} />
+			<button on:click={closeModal}>Close</button>
+		</header>
+		<ul class="items-list">
+			{#each purchaseableItems(itemsList) as item}
+				<li>
+					<button
+						class="item"
+						on:click={() => {
+							yourInventory = addItem(yourInventory, item.id);
+							closeModal();
+						}}
+					>
+						<ItemImg src={item.icon} alt={item.name} --size="56px" isMythic={MYTHICS[item.id]} />
+						<!-- <span>{item.name}</span> -->
+					</button>
+				</li>
+			{/each}
+		</ul>
+	</div>
+</dialog>
+
+<style lang="scss">
+	.blocks {
+		display: flex;
+		gap: 4rem;
+	}
+	.champion-block {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 2rem;
+		width: 480px;
+		padding: 2rem;
+		border: 2px solid hsl(var(--c1-hsl) / 0.15);
+
+		select {
+			font-size: 1.25rem;
+		}
+	}
+
+	.stat-and-inventory {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	dialog {
+		padding: 0;
+	}
+	dialog::backdrop {
+		background: hsla(210deg, 90%, 4%, 0.75);
+		backdrop-filter: blur(5px);
+	}
+	.items-modal {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+	.controls {
+		padding: 2rem;
+		padding-bottom: 1rem;
+	}
+	.items-list {
+		display: grid;
+		grid-template-columns: repeat(8, 1fr);
+		grid-auto-rows: min-content;
+		gap: 0.75rem;
+		padding: 2rem;
+		padding-top: 0;
+		height: 500px;
+		overflow-y: auto;
+
+		.item {
+			display: flex;
+			align-items: center;
+			gap: 0.75rem;
+		}
+	}
+</style>
